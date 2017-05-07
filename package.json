@@ -1,0 +1,17 @@
+{
+  "name": "kitemail",
+  "version": "1.0.0",
+  "description": "kitemail server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "*",
+    "express": "*",
+    "imessage": "^0.1.5",
+    "mongoose": "*"
+  },
+  "author": "KiteTeam",
+  "license": "ISC"
+}

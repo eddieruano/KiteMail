@@ -28,29 +28,54 @@ app.get('/api/conversations', function(req, res){
 });
 
 app.post('/api/send', function(req,res){
-	recipient = req.body.recipient;
-	message = req.body.payload;
+	recipient = req.body.r;
+	message = req.body.p;
+	
+	var delay = parseInt(req.body.d);
 
-	var delay = parseInt(req.body.delay);
+	var pullback = parseInt(req.body.pull);
 
 	//set start
 	var start = new Date(Date.now());
 	var sendTime = new Date(start.getTime() + (delay * 1000)); 
-	scheduler.scheduleJob(sendTime, function(err){
-		if(err){
-			throw err;
-		}
-		if (delay >0)
-		{
-			var delayed = "\n\n*This message was delayed by " +delay.toString()+" seconds*";
-			message = message + delayed;
-		}
+	if (pullback == 0)
+	{
+		res.json({status:"pulled"});
+		return;
+	}
+	if (delay != 0)
+	{
+		scheduler.scheduleJob(sendTime, function(err){
+			if(err){
+				throw err;
+			}
+			if (delay >0)
+			{
+				var delayed = "\n\n*This message was delayed by " +delay.toString()+" seconds*";
+				message = message + delayed;
+			}
+			deliver(recipient,message);
+			res.json({status: "Success"});
+		});
+
+	}
+	else
+	{
 		deliver(recipient,message);
 		res.json({status: "Success"});
-	});
-	
+	}
 });
 
+
+app.post('/api/undo', function(req,res){
+	command = req.body.command;
+	if (err)
+	{
+		throw err;
+	}
+	scheduler.cancel();
+	res.json({status: "Success Cancel"});
+});
 function deliver(recipient, message){
 	imess.sendMessage(recipient, message);
 }
